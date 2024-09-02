@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+// Abstract contract Employee
+abstract contract Employee {
+    uint public idNumber;
+    uint public managerId;
+
+    constructor(uint _idNumber, uint _managerId) {
+        idNumber = _idNumber;
+        managerId = _managerId;
+    }
+
+    // Virtual function to be overridden in derived contracts
+    function getAnnualCost() public view virtual returns (uint);
+}
+EngineeringManager.sol
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "./Salaried.sol";
+import "./Manager.sol";
+
+// EngineeringManager contract inheriting from Salaried and Manager
+contract EngineeringManager is Salaried, Manager {
+    constructor(uint _idNumber, uint _managerId, uint _annualSalary)
+        Salaried(_idNumber, _managerId, _annualSalary) {}
+}
