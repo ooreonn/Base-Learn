@@ -1,0 +1,69 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract ArraysExercise {
+    uint[] public numbers = [1,2,3,4,5,6,7,8,9,10];
+    address[] public senders;
+    uint[] public timestamps;
+
+    // Return the entire numbers array
+    function getNumbers() public view returns (uint[] memory) {
+        return numbers;
+    }
+
+    // Reset the numbers array to its initial value
+    function resetNumbers() public {
+        numbers = [1,2,3,4,5,6,7,8,9,10];
+    }
+
+    // Append to the numbers array
+    function appendToNumbers(uint[] calldata _toAppend) public {
+        for (uint i = 0; i < _toAppend.length; i++) {
+            numbers.push(_toAppend[i]);
+        }
+    }
+
+    // Save the sender's address and the provided timestamp
+    function saveTimestamp(uint _unixTimestamp) public {
+        senders.push(msg.sender);
+        timestamps.push(_unixTimestamp);
+    }
+
+    // Return timestamps after January 1, 2000, 12:00am and corresponding senders
+    function afterY2K() public view returns (uint[] memory, address[] memory) {
+        uint count = 0;
+
+        // First, determine the size of the arrays to be returned
+        for (uint i = 0; i < timestamps.length; i++) {
+            if (timestamps[i] > 946702800) {
+                count++;
+            }
+        }
+
+        // Create arrays of appropriate size
+        uint[] memory recentTimestamps = new uint[](count);
+        address[] memory recentSenders = new address[](count);
+
+        // Populate the arrays
+        uint j = 0;
+        for (uint i = 0; i < timestamps.length; i++) {
+            if (timestamps[i] > 946702800) {
+                recentTimestamps[j] = timestamps[i];
+                recentSenders[j] = senders[i];
+                j++;
+            }
+        }
+
+        return (recentTimestamps, recentSenders);
+    }
+
+    // Reset the senders array
+    function resetSenders() public {
+        delete senders;
+    }
+
+    // Reset the timestamps array
+    function resetTimestamps() public {
+        delete timestamps;
+    }
+}
