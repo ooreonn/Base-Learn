@@ -1,0 +1,52 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract GarageManager {
+    // Define a struct to represent a Car
+    struct Car {
+        string make;
+        string model;
+        string color;
+        uint numberOfDoors;
+    }
+
+    // Create a mapping to store cars for each address
+    mapping(address => Car[]) public garage;
+
+    // Custom error for invalid car index
+    error BadCarIndex(uint index);
+
+    // Function to add a car to the garage for the calling user
+    function addCar(string calldata make, string calldata model, string calldata color, uint numberOfDoors) external {
+        Car memory newCar = Car(make, model, color, numberOfDoors);
+        garage[msg.sender].push(newCar);
+    }
+
+    // Function to get all cars owned by the calling user
+    function getMyCars() external view returns (Car[] memory) {
+        return garage[msg.sender];
+    }
+
+    // Function to get all cars owned by a specific user
+    function getUserCars(address user) external view returns (Car[] memory) {
+        return garage[user];
+    }
+
+    // Function to update a car at a specific index
+    function updateCar(uint index, string calldata make, string calldata model, string calldata color, uint numberOfDoors) external {
+        Car[] storage cars = garage[msg.sender];
+        if (index >= cars.length) {
+            revert BadCarIndex(index);
+        }
+        Car storage carToUpdate = cars[index];
+        carToUpdate.make = make;
+        carToUpdate.model = model;
+        carToUpdate.color = color;
+        carToUpdate.numberOfDoors = numberOfDoors;
+    }
+
+    // Function to reset (delete) the garage for the calling user
+    function resetMyGarage() external {
+        delete garage[msg.sender];
+    }
+}
