@@ -1,0 +1,75 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract EmployeeStorage {
+    // State Variables
+    string public name;        // Employee's name
+    uint256 public idNumber;   // Employee's ID number
+    uint32 private salary;     // Employee's salary, range 0 to 1,000,000 dollars
+    uint16 private shares;     // Employee's shares, range 0 to 65535 shares
+
+    // Constructor
+    constructor(uint16 _shares, string memory _name, uint32 _salary, uint256 _idNumber) {
+        require(_salary <= 1_000_000, "Salary must be between 0 and 1,000,000");
+        shares = _shares;
+        name = _name;
+        salary = _salary;
+        idNumber = _idNumber;
+    }
+
+    // Custom Error
+    error TooManyShares(uint256 newTotalShares);
+
+    // View Salary
+    function viewSalary() public view returns (uint32) {
+        return salary;
+    }
+
+    // View Shares
+    function viewShares() public view returns (uint16) {
+        return shares;
+    }
+
+    // Grant Shares
+    function grantShares(uint16 _newShares) public {
+        // Check if _newShares itself exceeds 5000
+        if (_newShares > 5000) {
+            revert("Too many shares");
+        }
+
+        uint256 newTotalShares = shares + _newShares;
+
+        // Revert if new total shares exceed 5000
+        if (newTotalShares > 5000) {
+            revert TooManyShares(newTotalShares);
+        }
+
+        shares = uint16(newTotalShares); // Ensure the value fits into uint16
+    }
+
+    // Check for Packing
+    /**
+    * Do not modify this function.  It is used to enable the unit test for this pin
+    * to check whether or not you have configured your storage variables to make
+    * use of packing.
+    *
+    * If you wish to cheat, simply modify this function to always return `0`
+    * I'm not your boss ¯\_(ツ)_/¯
+    *
+    * Fair warning though, if you do cheat, it will be on the blockchain having been
+    * deployed by your wallet....FOREVER!
+    */
+    function checkForPacking(uint _slot) public view returns (uint r) {
+        assembly {
+            r := sload(_slot)
+        }
+    }
+
+    // Debug Reset Shares
+    /**
+    * Warning: Anyone can use this function at any time!
+    */
+    function debugResetShares() public {
+        shares = 1000;
+    }
+}
